@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RawMandi — B2B Raw Materials Procurement Platform (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#181C1F;
+    --ink-soft:#4C555C;
+    --paper:#F3F4F0;
+    --paper-alt:#E9EBE3;
+    --steel:#2B4A63;
+    --steel-deep:#152A3A;
+    --amber:#E07A2C;
+    --amber-deep:#B85F1C;
+    --up:#B84A3A;
+    --down:#3F7D5C;
+    --line:#D6D6CC;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.disp{
+    font-family:'Space Grotesk',sans-serif;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+  .demo-flag{
+    background:var(--steel-deep);
+    color:#DCE4EA;
+    font-size:13px;
+    text-align:center;
+    padding:8px 16px;
+    letter-spacing:.02em;
+  }
+  .demo-flag b{color:#F0B27A;}
+
+  /* NAV */
+  header.site{
+    position:sticky;top:0;z-index:50;
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 32px;max-width:1180px;margin:0 auto;
+  }
+  .logo{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk';font-weight:700;font-size:21px;}
+  .logo span.dot{color:var(--amber);}
+  .nav-links{display:flex;gap:32px;font-size:14.5px;font-weight:500;}
+  .nav-links a{color:var(--ink-soft);padding:6px 0;border-bottom:2px solid transparent;transition:.15s;}
+  .nav-links a:hover{color:var(--ink);border-color:var(--amber);}
+  .nav-actions{display:flex;gap:12px;align-items:center;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    padding:10px 20px;border-radius:6px;font-size:14.5px;font-weight:600;
+    cursor:pointer;border:1px solid transparent;transition:.15s;
+  }
+  .btn-primary{background:var(--steel-deep);color:#fff;}
+  .btn-primary:hover{background:#0F2130;}
+  .btn-ghost{border-color:var(--line);color:var(--ink);background:transparent;}
+  .btn-ghost:hover{border-color:var(--ink);}
+
+  /* TICKER */
+  .ticker-bar{
+    background:var(--steel-deep);
+    overflow:hidden;white-space:nowrap;
+    border-bottom:1px solid #0D1D29;
+  }
+  .ticker-track{
+    display:inline-flex;gap:0;
+    animation:scroll-left 32s linear infinite;
+  }
+  .ticker-item{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:9px 24px;color:#CBD6DD;font-size:13px;
+    border-right:1px solid rgba(255,255,255,0.08);
+    white-space:nowrap;
+  }
+  .ticker-item .name{color:#8FA3B0;}
+  .ticker-item .val{font-family:'IBM Plex Mono';color:#fff;}
+  .ticker-item .chg.up{color:#E8877A;}
+  .ticker-item .chg.down{color:#79C9A2;}
+  @keyframes scroll-left{
+    0%{transform:translateX(0);}
+    100%{transform:translateX(-50%);}
+  }
+  @media(prefers-reduced-motion:reduce){.ticker-track{animation:none;}}
+
+  /* HERO */
+  .hero{
+    padding:72px 0 56px;
+    border-bottom:1px solid var(--line);
+  }
+  .hero-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:56px;align-items:center;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:13px;font-weight:600;color:var(--amber-deep);
+    background:#FBEBDC;border:1px solid #F0C99A;
+    padding:5px 12px;border-radius:99px;margin-bottom:20px;
+  }
+  h1.hero-title{
+    font-size:46px;line-height:1.08;font-weight:700;color:var(--ink);
+    margin-bottom:20px;
+  }
+  h1.hero-title em{font-style:normal;color:var(--steel);}
+  .hero-sub{font-size:16.5px;color:var(--ink-soft);line-height:1.6;max-width:480px;margin-bottom:32px;}
+  .search-box{
+    display:flex;background:#fff;border:1.5px solid var(--ink);
+    border-radius:8px;overflow:hidden;max-width:480px;
+  }
+  .search-box input{
+    flex:1;border:none;padding:15px 16px;font-size:15px;font-family:inherit;outline:none;
+  }
+  .search-box button{
+    background:var(--amber);color:#fff;border:none;padding:0 24px;
+    font-weight:600;font-size:14.5px;cursor:pointer;
+  }
+  .search-box button:hover{background:var(--amber-deep);}
+  .hero-stats{display:flex;gap:36px;margin-top:36px;}
+  .hero-stat b{display:block;font-family:'Space Grotesk';font-size:22px;color:var(--ink);}
+  .hero-stat span{font-size:12.5px;color:var(--ink-soft);}
+
+  .hero-card{
+    background:var(--steel-deep);border-radius:16px;padding:28px;color:#fff;
+  }
+  .hero-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+  .hero-card-head b{font-family:'Space Grotesk';font-size:15px;}
+  .hero-card-head .live{
+    display:flex;align-items:center;gap:6px;font-size:11.5px;color:#79C9A2;
+    background:rgba(121,201,162,0.12);padding:4px 10px;border-radius:99px;
+  }
+  .live .dot{width:6px;height:6px;border-radius:50%;background:#79C9A2;}
+  .price-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .price-row:last-child{border-bottom:none;}
+  .price-row .pname{font-size:14px;color:#DCE4EA;}
+  .price-row .pname small{display:block;color:#7C8D98;font-size:11.5px;}
+  .price-row .pval{font-family:'IBM Plex Mono';font-size:14.5px;text-align:right;}
+  .price-row .pchg{font-size:11.5px;text-align:right;}
+  .pchg.up{color:#E8877A;}.pchg.down{color:#79C9A2;}
+
+  /* SECTION SHARED */
+  section{padding:64px 0;}
+  .section-head{max-width:560px;margin-bottom:36px;}
+  .kicker{font-size:12.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--amber-deep);margin-bottom:10px;}
+  h2.section-title{font-size:30px;font-weight:700;color:var(--ink);margin-bottom:10px;}
+  .section-sub{color:var(--ink-soft);font-size:15px;line-height:1.6;}
+
+  /* CATEGORIES */
+  .cat-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+  }
+  .cat-card{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:20px;transition:.15s;cursor:pointer;
+  }
+  .cat-card:hover{border-color:var(--steel);transform:translateY(-2px);box-shadow:0 6px 18px rgba(21,42,58,0.08);}
+  .cat-icon{
+    width:42px;height:42px;border-radius:8px;background:var(--paper-alt);
+    display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px;
+  }
+  .cat-card b{display:block;font-family:'Space Grotesk';font-size:15.5px;margin-bottom:4px;}
+  .cat-card span{font-size:12.5px;color:var(--ink-soft);}
+
+  /* MANUFACTURERS */
+  .filter-bar{
+    display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+    padding:0 0 28px;
+  }
+  .chip{
+    padding:8px 16px;border-radius:99px;border:1px solid var(--line);
+    font-size:13.5px;font-weight:500;color:var(--ink-soft);cursor:pointer;background:#fff;
+  }
+  .chip.active{background:var(--steel-deep);color:#fff;border-color:var(--steel-deep);}
+  .filter-search{
+    margin-left:auto;display:flex;align-items:center;gap:8px;
+    border:1px solid var(--line);border-radius:8px;padding:8px 14px;background:#fff;min-width:220px;
+  }
+  .filter-search input{border:none;outline:none;font-size:13.5px;font-family:inherit;flex:1;background:transparent;}
+  .mfg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .mfg-card{
+    background:#fff;border:1px solid var(--line);border-radius:14px;
+    padding:22px;transition:.15s;display:flex;flex-direction:column;
+  }
+  .mfg-card:hover{border-color:var(--steel);box-shadow:0 8px 22px rgba(21,42,58,0.08);transform:translateY(-2px);}
+  .mfg-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+  .mfg-avatar{
+    width:46px;height:46px;border-radius:10px;background:var(--paper-alt);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk';font-weight:700;font-size:16px;color:var(--steel-deep);
+  }
+  .verified-badge{
+    display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;
+    color:var(--down);background:#E4F1EA;padding:4px 9px;border-radius:99px;
+  }
+  .mfg-name{font-family:'Space Grotesk';font-size:16.5px;font-weight:600;margin-bottom:3px;}
+  .mfg-loc{font-size:12.5px;color:var(--ink-soft);margin-bottom:14px;display:flex;align-items:center;gap:5px;}
+  .mfg-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+  .tag{
+    font-size:11.5px;font-weight:500;color:var(--steel-deep);background:var(--paper-alt);
+    padding:4px 10px;border-radius:6px;
+  }
+  .mfg-stats{
+    display:flex;justify-content:space-between;padding:14px 0;
+    border-top:1px solid var(--line);margin-bottom:16px;
+  }
+  .mfg-stat{text-align:left;}
+  .mfg-stat b{display:block;font-family:'IBM Plex Mono';font-size:14px;}
+  .mfg-stat span{font-size:11px;color:var(--ink-soft);}
+  .mfg-actions{display:flex;gap:8px;margin-top:auto;}
+  .mfg-actions .btn{flex:1;}
+  .btn-sm{padding:8px 14px;font-size:13px;}
+
+  /* SERVICES */
+  .services-strip{background:var(--paper-alt);}
+  .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .svc-card{
+    background:#fff;border-radius:12px;padding:26px;border:1px solid var(--line);
+  }
+  .svc-num{font-family:'IBM Plex Mono';font-size:12px;color:var(--amber-deep);margin-bottom:14px;}
+  .svc-card h3{font-size:17px;margin-bottom:8px;}
+  .svc-card p{font-size:14px;color:var(--ink-soft);line-height:1.6;margin:0 0 14px;}
+  .svc-link{font-size:13.5px;font-weight:600;color:var(--steel);}
+
+  /* WHY US */
+  .why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .why-card{padding:22px 0;border-top:2px solid var(--ink);}
+  .why-card b{display:block;font-family:'Space Grotesk';font-size:16px;margin-bottom:8px;}
+  .why-card p{font-size:13.5px;color:var(--ink-soft);line-height:1.55;margin:0;}
+
+  /* TRUST STRIP */
+  .trust-strip{padding:36px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .trust-label{font-size:12.5px;color:var(--ink-soft);text-align:center;margin-bottom:20px;letter-spacing:.04em;text-transform:uppercase;}
+  .trust-logos{display:flex;justify-content:center;flex-wrap:wrap;gap:14px;}
+  .trust-logo{
+    font-family:'Space Grotesk';font-weight:600;font-size:14px;color:#9B9C90;
+    padding:8px 18px;border:1px solid var(--line);border-radius:6px;
+  }
+
+  /* TESTIMONIALS */
+  .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .testi-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px;}
+  .testi-quote{font-size:14px;line-height:1.65;color:var(--ink);margin-bottom:18px;}
+  .testi-person{display:flex;align-items:center;gap:10px;}
+  .testi-avatar{width:34px;height:34px;border-radius:50%;background:var(--steel);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-family:'Space Grotesk';font-weight:600;}
+  .testi-person b{display:block;font-size:13.5px;}
+  .testi-person span{font-size:12px;color:var(--ink-soft);}
+
+  /* CTA */
+  .cta-band{
+    background:var(--steel-deep);color:#fff;border-radius:20px;
+    padding:48px;display:flex;justify-content:space-between;align-items:center;gap:32px;
+  }
+  .cta-band h2{font-size:26px;margin-bottom:10px;color:#fff;}
+  .cta-band p{color:#AEC0CB;font-size:14.5px;max-width:420px;margin:0;}
+  .cta-actions{display:flex;gap:12px;flex-shrink:0;}
+  .btn-amber{background:var(--amber);color:#fff;}
+  .btn-amber:hover{background:var(--amber-deep);}
+  .btn-outline{border-color:rgba(255,255,255,0.3);color:#fff;}
+  .btn-outline:hover{border-color:#fff;}
+
+  /* FOOTER */
+  footer{background:var(--steel-deep);color:#AEC0CB;padding:56px 0 24px;font-size:13.5px;}
+  .foot-grid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:32px;margin-bottom:40px;}
+  .foot-logo{font-family:'Space Grotesk';font-weight:700;font-size:19px;color:#fff;margin-bottom:12px;}
+  .foot-col h4{font-family:'Space Grotesk';font-size:13px;color:#fff;margin-bottom:14px;text-transform:uppercase;letter-spacing:.05em;}
+  .foot-col a{display:block;color:#8FA3B0;margin-bottom:9px;transition:.15s;}
+  .foot-col a:hover{color:#fff;}
+  .foot-bottom{border-top:1px solid rgba(255,255,255,0.1);padding-top:20px;display:flex;justify-content:space-between;color:#6E828E;font-size:12.5px;}
+
+  @media(max-width:900px){
+    .hero-grid{grid-template-columns:1fr;}
+    .cat-grid{grid-template-columns:repeat(2,1fr);}
+    .svc-grid{grid-template-columns:1fr;}
+    .why-grid{grid-template-columns:repeat(2,1fr);}
+    .testi-grid{grid-template-columns:1fr;}
+    .foot-grid{grid-template-columns:repeat(2,1fr);}
+    .cta-band{flex-direction:column;text-align:center;}
+    h1.hero-title{font-size:34px;}
+    nav .nav-links{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-flag">⚠️ <b>Demo / MVP preview</b> — placeholder content, no live pricing or backend yet. Not for launch.</div>
+
+<header class="site">
+  <nav>
+    <div class="logo">Raw<span class="dot">Mandi</span></div>
+    <div class="nav-links">
+      <a href="#prices">Prices</a>
+      <a href="#categories">Categories</a>
+      <a href="#manufacturers">Manufacturers</a>
+      <a href="#services">Services</a>
+      <a href="#why">Why Us</a>
+      <a href="#reviews">Reviews</a>
+    </div>
+    <div class="nav-actions">
+      <a class="btn btn-ghost">Log in</a>
+      <a class="btn btn-primary">Get Quotes</a>
+    </div>
+  </nav>
+  <div class="ticker-bar" id="prices">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">● Demo build — sample data only</div>
+      <h1 class="hero-title">India's <em>B2B raw materials</em><br>procurement, made simple</h1>
+      <p class="hero-sub">Live prices, instant quotations and order tracking for steel, polymers, chemicals and more — all from one dashboard built for SMEs.</p>
+      <div class="search-box">
+        <input type="text" placeholder="Search HR Coil, PVC Resin, Copper Cathode…">
+        <button>Search</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><b>500K+</b><span>Orders delivered</span></div>
+        <div class="hero-stat"><b>2M+</b><span>SMEs empowered</span></div>
+        <div class="hero-stat"><b>26</b><span>States covered</span></div>
+        <div class="hero-stat"><b>500+</b><span>Materials tracked</span></div>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-card-head">
+        <b>Today's raw material rates</b>
+        <div class="live"><span class="dot"></span>Sample data</div>
+      </div>
+      <div class="price-row">
+        <div class="pname">HR Coil<small>Mild Steel · per MT</small></div>
+        <div><div class="pval">₹54,200</div><div class="pchg up">▲ 1.2%</div></div>
+      </div>
+      <div class="price-row">
+        <div class="pname">Copper Cathode<small>Non-Ferrous · per MT</small></div>
+        <div><div class="pval">₹8,91,400</div><div class="pchg down">▼ 0.6%</div></div>
+      </div>
+      <div class="price-row">
+        <div class="pname">PVC Resin<small>Polymers · per MT</small></div>
+        <div><div class="pval">₹78,900</div><div class="pchg up">▲ 0.4%</div></div>
+      </div>
+      <div class="price-row">
+        <div class="pname">Caustic Soda<small>Chemicals · per MT</small></div>
+        <div><div class="pval">₹31,600</div><div class="pchg down">▼ 1.1%</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="categories">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Explore</div>
+      <h2 class="section-title">Categories</h2>
+      <p class="section-sub">Tap into 500+ raw material lines across eight supply chains — get quotations, live prices and news for each.</p>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card"><div class="cat-icon">🔩</div><b>Mild Steel</b><span>HR, CR, TMT, plates</span></div>
+      <div class="cat-card"><div class="cat-icon">⚙️</div><b>Non Ferrous</b><span>Copper, aluminium, zinc</span></div>
+      <div class="cat-card"><div class="cat-icon">🧴</div><b>Polymers & Packaging</b><span>PVC, PP, LDPE resins</span></div>
+      <div class="cat-card"><div class="cat-icon">🧪</div><b>Chemicals</b><span>Caustic, soda ash, acids</span></div>
+      <div class="cat-card"><div class="cat-icon">⛽</div><b>Energy & Petroleum</b><span>Fuels, lubricants, LPG</span></div>
+      <div class="cat-card"><div class="cat-icon">🏗️</div><b>Construction</b><span>Cement, bricks, aggregates</span></div>
+      <div class="cat-card"><div class="cat-icon">🌾</div><b>Agri</b><span>Grains, pulses, oils</span></div>
+      <div class="cat-card"><div class="cat-icon">🧵</div><b>Apparel</b><span>Yarn, fabric, trims</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="manufacturers">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Supplier network</div>
+      <h2 class="section-title">Verified manufacturers</h2>
+      <p class="section-sub">Sample manufacturer profiles across steel, polymers, chemicals and more — this is a layout preview, not a live directory.</p>
+    </div>
+
+    <div class="filter-bar">
+      <div class="chip active">All categories</div>
+      <div class="chip">Mild Steel</div>
+      <div class="chip">Non Ferrous</div>
+      <div class="chip">Polymers</div>
+      <div class="chip">Chemicals</div>
+      <div class="chip">Construction</div>
+      <div class="filter-search">
+        <span class="mono" style="font-size:13px;color:var(--ink-soft);">⌕</span>
+        <input type="text" placeholder="Search manufacturers or location…">
+      </div>
+    </div>
+
+    <div class="mfg-grid">
+
+      <div class="mfg-card">
+        <div class="mfg-top">
+          <div class="mfg-avatar">VS</div>
+          <div class="verified-badge">✓ Verified</div>
+        </div>
+        <div class="mfg-name">Vertex Steel Works</div>
+        <div class="mfg-loc">📍 Ludhiana, Punjab</div>
+        <div class="mfg-tags">
+          <span class="tag">HR Coil</span>
+          <span class="tag">CR Coil</span>
+          <span class="tag">TMT Bar</span>
+        </div>
+        <div class="mfg-stats">
+          <div class="mfg-stat"><b>4.6</b><span>Rating</span></div>
+          <div class="mfg-stat"><b>320+</b><span>Orders</span></div>
+          <div class="mfg-stat"><b>12 yrs</b><span>On platform</span></div>
+        </div>
+        <div class="mfg-actions">
+          <a class="btn btn-ghost btn-sm">View profile</a>
+          <a class="btn btn-primary btn-sm">Get quote</a>
+        </div>
+      </div>
+
+      <div class="mfg-card">
+        <div class="mfg-top">
+          <div class="mfg-avatar">CA</div>
+          <div class="verified-badge">✓ Verified</div>
+        </div>
+        <div class="mfg-name">Coastal Alloys Pvt Ltd</div>
+        <div class="mfg-loc">📍 Vizag, Andhra Pradesh</div>
+        <div class="mfg-tags">
+          <span class="tag">Copper Cathode</span>
+          <span class="tag">Aluminium Ingot</span>
+        </div>
+        <div class="mfg-stats">
+          <div class="mfg-stat"><b>4.4</b><span>Rating</span></div>
+          <div class="mfg-stat"><b>180+</b><span>Orders</span></div>
+          <div class="mfg-stat"><b>8 yrs</b><span>On platform</span></div>
+        </div>
+        <div class="mfg-actions">
+          <a class="btn btn-ghost btn-sm">View profile</a>
+          <a class="btn btn-primary btn-sm">Get quote</a>
+        </div>
+      </div>
+
+      <div class="mfg-card">
+        <div class="mfg-top">
+          <div class="mfg-avatar">SF</div>
+          <div class="verified-badge">✓ Verified</div>
+        </div>
+        <div class="mfg-name">Sundar Fabtech</div>
+        <div class="mfg-loc">📍 Ahmedabad, Gujarat</div>
+        <div class="mfg-tags">
+          <span class="tag">PVC Resin</span>
+          <span class="tag">PP Granules</span>
+          <span class="tag">Packaging Film</span>
+        </div>
+        <div class="mfg-stats">
+          <div class="mfg-stat"><b>4.7</b><span>Rating</span></div>
+          <div class="mfg-stat"><b>410+</b><span>Orders</span></div>
+          <div class="mfg-stat"><b>15 yrs</b><span>On platform</span></div>
+        </div>
+        <div class="mfg-actions">
+          <a class="btn btn-ghost btn-sm">View profile</a>
+          <a class="btn btn-primary btn-sm">Get quote</a>
+        </div>
+      </div>
+
+      <div class="mfg-card">
+        <div class="mfg-top">
+          <div class="mfg-avatar">AC</div>
+          <div class="verified-badge">✓ Verified</div>
+        </div>
+        <div class="mfg-name">Aravali Cement & Infra</div>
+        <div class="mfg-loc">📍 Jodhpur, Rajasthan</div>
+        <div class="mfg-tags">
+          <span class="tag">OPC Cement</span>
+          <span class="tag">Aggregates</span>
+        </div>
+        <div class="mfg-stats">
+          <div class="mfg-stat"><b>4.3</b><span>Rating</span></div>
+          <div class="mfg-stat"><b>260+</b><span>Orders</span></div>
+          <div class="mfg-stat"><b>10 yrs</b><span>On platform</span></div>
+        </div>
+        <div class="mfg-actions">
+          <a class="btn btn-ghost btn-sm">View profile</a>
+          <a class="btn btn-primary btn-sm">Get quote</a>
+        </div>
+      </div>
+
+      <div class="mfg-card">
+        <div class="mfg-top">
+          <div class="mfg-avatar">MC</div>
+          <div class="verified-badge">✓ Verified</div>
+        </div>
+        <div class="mfg-name">Meridian Chemicals</div>
+        <div class="mfg-loc">📍 Vapi, Gujarat</div>
+        <div class="mfg-tags">
+          <span class="tag">Caustic Soda</span>
+          <span class="tag">Soda Ash</span>
+        </div>
+        <div class="mfg-stats">
+          <div class="mfg-stat"><b>4.5</b><span>Rating</span></div>
+          <div class="mfg-stat"><b>150+</b><span>Orders</span></div>
+          <div class="mfg-stat"><b>6 yrs</b><span>On platform</span></div>
+        </div>
+        <div class="mfg-actions">
+          <a class="btn btn-ghost btn-sm">View profile</a>
+          <a class="btn btn-primary btn-sm">Get quote</a>
+        </div>
+      </div>
+
+      <div class="mfg-card">
+        <div class="mfg-top">
+          <div class="mfg-avatar">NI</div>
+          <div class="verified-badge">✓ Verified</div>
+        </div>
+        <div class="mfg-name">Nalanda Infra Materials</div>
+        <div class="mfg-loc">📍 Nagpur, Maharashtra</div>
+        <div class="mfg-tags">
+          <span class="tag">TMT Bar</span>
+          <span class="tag">Structural Steel</span>
+        </div>
+        <div class="mfg-stats">
+          <div class="mfg-stat"><b>4.2</b><span>Rating</span></div>
+          <div class="mfg-stat"><b>95+</b><span>Orders</span></div>
+          <div class="mfg-stat"><b>4 yrs</b><span>On platform</span></div>
+        </div>
+        <div class="mfg-actions">
+          <a class="btn btn-ghost btn-sm">View profile</a>
+          <a class="btn btn-primary btn-sm">Get quote</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="services-strip" id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">What you get</div>
+      <h2 class="section-title">Built for buyers, suppliers and channel partners</h2>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-card"><div class="svc-num">01</div><h3>Buy with us</h3><p>One place to source raw materials with negotiated rates and vetted suppliers.</p><span class="svc-link">Know more →</span></div>
+      <div class="svc-card"><div class="svc-num">02</div><h3>Live prices</h3><p>Track real-time rates across 500+ SKUs so you never overpay on a purchase.</p><span class="svc-link">Know more →</span></div>
+      <div class="svc-card"><div class="svc-num">03</div><h3>Daily market news</h3><p>Ground-level updates on supply, demand and pricing trends in your category.</p><span class="svc-link">Know more →</span></div>
+      <div class="svc-card"><div class="svc-num">04</div><h3>Credit access</h3><p>Working capital support so cash flow never blocks a purchase order.</p><span class="svc-link">Know more →</span></div>
+      <div class="svc-card"><div class="svc-num">05</div><h3>Order tracking</h3><p>Full visibility on every order from confirmation to delivery, in one dashboard.</p><span class="svc-link">Know more →</span></div>
+      <div class="svc-card"><div class="svc-num">06</div><h3>Pan-India fulfilment</h3><p>Delivery network built to reach manufacturers and contractors nationwide.</p><span class="svc-link">Know more →</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Why choose us</div>
+      <h2 class="section-title">Procurement that pays for itself</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card"><b>Lower rates</b><p>Rates benchmarked below prevailing market prices through aggregated buying power.</p></div>
+      <div class="why-card"><b>Flexible credit</b><p>Don't let working capital gaps hold back a purchase you need to make today.</p></div>
+      <div class="why-card"><b>Pan-India + global</b><p>Fulfilment built for domestic manufacturers and export-scale buyers alike.</p></div>
+      <div class="why-card"><b>Wide catalogue</b><p>Thousands of SKUs from multiple verified brands, all in one marketplace.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="trust-strip">
+    <div class="trust-label">Trusted by teams across industries (sample logos)</div>
+    <div class="trust-logos">
+      <div class="trust-logo">Vertex Steel</div>
+      <div class="trust-logo">Nalanda Infra</div>
+      <div class="trust-logo">Meridian Energy</div>
+      <div class="trust-logo">Coastal Alloys</div>
+      <div class="trust-logo">Sundar Fabtech</div>
+      <div class="trust-logo">Aravali Cement</div>
+    </div>
+  </div>
+</div>
+
+<section id="reviews">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Customer stories</div>
+      <h2 class="section-title">What buyers are saying</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <p class="testi-quote">"Switching our steel procurement over meant we finally had predictable pricing instead of chasing quotes every week."</p>
+        <div class="testi-person"><div class="testi-avatar">SP</div><div><b>Sample Persona</b><span>Manufacturing, Gujarat</span></div></div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-quote">"The credit line took real pressure off our cash flow during our busiest ordering season."</p>
+        <div class="testi-person"><div class="testi-avatar">RK</div><div><b>Sample Persona</b><span>Contractor, Maharashtra</span></div></div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-quote">"Being able to see order status in one dashboard cut down a lot of back-and-forth with our team."</p>
+        <div class="testi-person"><div class="testi-avatar">AN</div><div><b>Sample Persona</b><span>Trading firm, Delhi NCR</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="cta-band">
+      <div>
+        <h2>Get early access to the full platform</h2>
+        <p>This is a demo build. Sign up and we'll notify you when live pricing, quotations and order tracking go live.</p>
+      </div>
+      <div class="cta-actions">
+        <a class="btn btn-amber">Join waitlist</a>
+        <a class="btn btn-outline">See categories</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo">RawMandi</div>
+        <p style="color:#8FA3B0;line-height:1.6;max-width:280px;">Smart procurement for SMEs. Demo build — placeholder company details below.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <a href="#">About us</a>
+        <a href="#">Careers</a>
+        <a href="#">Investors</a>
+      </div>
+      <div class="foot-col">
+        <h4>Resources</h4>
+        <a href="#">Blog</a>
+        <a href="#">Market news</a>
+        <a href="#">Press</a>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <a href="#">Contact us</a>
+        <a href="#">Privacy & terms</a>
+        <a href="#">Supplier enquiries</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 RawMandi (demo). Sample content, not a live company.</span>
+      <span>Built as an MVP preview</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const items = [
+    {name:'HR Coil', val:'₹54,200/MT', chg:'+1.2%', dir:'up'},
+    {name:'CR Coil', val:'₹58,900/MT', chg:'+0.8%', dir:'up'},
+    {name:'TMT Bar', val:'₹51,300/MT', chg:'-0.3%', dir:'down'},
+    {name:'Copper Cathode', val:'₹8,91,400/MT', chg:'-0.6%', dir:'down'},
+    {name:'Aluminium Ingot', val:'₹2,31,500/MT', chg:'+0.9%', dir:'up'},
+    {name:'PVC Resin', val:'₹78,900/MT', chg:'+0.4%', dir:'up'},
+    {name:'PP Granules', val:'₹95,200/MT', chg:'-0.2%', dir:'down'},
+    {name:'Caustic Soda', val:'₹31,600/MT', chg:'-1.1%', dir:'down'},
+    {name:'Soda Ash', val:'₹28,750/MT', chg:'+0.5%', dir:'up'},
+    {name:'Brent Crude', val:'$81.40/bbl', chg:'+0.7%', dir:'up'},
+  ];
+  const track = document.getElementById('tickerTrack');
+  const html = items.map(i => `
+    <div class="ticker-item">
+      <span class="name">${i.name}</span>
+      <span class="val">${i.val}</span>
+      <span class="chg ${i.dir}">${i.dir === 'up' ? '▲' : '▼'} ${i.chg}</span>
+    </div>`).join('');
+  track.innerHTML = html + html;
+</script>
+
+</body>
+</html>
